@@ -1,0 +1,11 @@
+3. Executing Verilog-2005 frontend.
+Warning: Port 'reset' is not connected.
+Warning: Width mismatch in assignment to signal 'data_out'.
+Warning: Multiple conflicting drivers for signal 'addr'.
+ERROR: Undefined module '\memory' referenced in design.
+ERROR: Unable to elaborate module 'top'.
+Warning: Unused sequential element in 'counter'.
+ERROR: Module '\fsm' referenced in design but not found.
+Warning: Port 'clk' connected to constant value 0.
+Warning: Signal 'done' declared but not used.
+ERROR: Simulation failed: unable to resolve top module.

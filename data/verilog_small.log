@@ -1,0 +1,3 @@
+iverilog: warning: signal 'clk' is not connected to any module ports.
+iverilog: error: syntax error near "endmodule"
+iverilog: error: Unable to elaborate module "counter_tb".

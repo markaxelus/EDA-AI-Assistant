@@ -1,0 +1,12 @@
+iverilog: warning: signal 'data_in' is unused.
+iverilog: warning: Truncating 32-bit constant to 16 bits for signal 'addr'.
+iverilog: warning: multiple drivers detected for net 'clk'.
+iverilog: error: Undefined variable 'count_val' in module 'counter'.
+iverilog: error: module 'fsm' not found, referenced in 'top.v:42'.
+iverilog: warning: signal 'ready' declared but never assigned.
+iverilog: error: port mismatch: instance 'u1' expects 3 ports, but 2 given.
+iverilog: warning: signed/unsigned mismatch in comparison.
+iverilog: error: hierarchical reference to 'uut.invalid_sig' failed.
+iverilog: error: syntax error near "endmodule".
+iverilog: error: Unable to elaborate module 'testbench'.
+iverilog: warning: multiple conflicting drivers for net 'reset_n'.
