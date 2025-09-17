@@ -6,8 +6,6 @@ class LogItem(BaseModel):
   level: str            # error, warning, info
   code: Optional[str]   # tool-specific
   message: str
-  file: Optional[str]
-  line: Optional[int]
   raw: str
 
 class Cluster(BaseModel):
