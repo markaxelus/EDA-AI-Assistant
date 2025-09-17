@@ -5,7 +5,7 @@ class LogItem(BaseModel):
   tool: str             # iverilog, yosys, or generic
   level: str            # error, warning, info
   code: Optional[str]   # tool-specific
-  message: str
+  msg: str
   raw: str
 
 class Cluster(BaseModel):

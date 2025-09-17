@@ -1,4 +1,4 @@
-3. Executing Verilog-2005 frontend.
+2. Executing Verilog-2005 frontend.
 Warning: Port 'reset' is not connected.
 Warning: Width mismatch in assignment to signal 'data_out'.
 Warning: Multiple conflicting drivers for signal 'addr'.
