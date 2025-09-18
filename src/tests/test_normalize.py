@@ -14,7 +14,7 @@ from ai_logs.schema import LogItem, Cluster
 
 class TestFingerprint:    
     def test_fingerprint_basic_number_replacement(self):
-        """Test that numbers are replaced with <NUM>."""
+        """Test that numbers are replaced with <NUM>"""
         msg1 = "signal 'clk' has value 123"
         msg2 = "signal 'clk' has value 456"
         
@@ -25,7 +25,7 @@ class TestFingerprint:
         assert len(fp1) == 32  # MD5 hash length
     
     def test_fingerprint_quoted_string_replacement(self):
-        """Test that quoted strings are replaced with '<SIG>'."""
+        """Test that quoted strings are replaced with '<SIG>'"""
         msg1 = "signal 'clk' is not connected"
         msg2 = "signal 'reset' is not connected"
         
@@ -35,7 +35,7 @@ class TestFingerprint:
         assert fp1 == fp2
     
     def test_fingerprint_identifier_replacement(self):
-        """Test that identifiers are replaced with <ID>."""
+        """Test that identifiers are replaced with <ID>"""
         msg1 = "variable my_var has no driver"
         msg2 = "variable other_var has no driver"
         
@@ -45,7 +45,7 @@ class TestFingerprint:
         assert fp1 == fp2
     
     def test_fingerprint_preserves_keywords(self):
-        """Test that keywords are preserved and not replaced."""
+        """Test that keywords are preserved and not replaced"""
         msg1 = "signal port module net driver assignment"
         msg2 = "signal port module net driver assignment"
         
@@ -55,7 +55,7 @@ class TestFingerprint:
         assert fp1 == fp2
     
     def test_fingerprint_mixed_normalization(self):
-        """Test fingerprint with mixed types of normalization."""
+        """Test fingerprint with mixed types of normalization"""
         msg1 = "signal 'clk' in module counter_123 has value 456"
         msg2 = "signal 'reset' in module timer_789 has value 999"
         
@@ -65,7 +65,7 @@ class TestFingerprint:
         assert fp1 == fp2
     
     def test_fingerprint_different_messages(self):
-        """Test that genuinely different messages have different fingerprints."""
+        """Test that genuinely different messages have different fingerprints"""
         msg1 = "signal 'clk' is not connected"
         msg2 = "syntax error near 'endmodule'"
         
@@ -75,15 +75,15 @@ class TestFingerprint:
         assert fp1 != fp2
     
     def test_fingerprint_empty_string(self):
-        """Test fingerprint with empty string."""
+        """Test fingerprint with empty string"""
         msg = ""
         fp = fingerprint(msg)
         
-        assert len(fp) == 32  # MD5 hash length
+        assert len(fp) == 32  
         assert isinstance(fp, str)
     
     def test_fingerprint_special_characters(self):
-        """Test fingerprint with special characters."""
+        """Test fingerprint with special characters"""
         msg1 = "error: unexpected token ';' at line 123"
         msg2 = "error: unexpected token ':' at line 456"
         
@@ -93,7 +93,7 @@ class TestFingerprint:
         assert fp1 == fp2
     
     def test_fingerprint_case_sensitivity(self):
-        """Test that fingerprint is case sensitive for non-normalized parts."""
+        """Test that fingerprint is case sensitive for non-normalized parts"""
         msg1 = "Signal 'clk' is not connected"
         msg2 = "signal 'clk' is not connected"
         
@@ -105,7 +105,7 @@ class TestFingerprint:
 
 class TestClusterLogs:
     def test_cluster_logs_basic_clustering(self):
-        """Test basic clustering of similar log items."""
+        """Test basic clustering of similar log items"""
         items = [
             LogItem(tool="iverilog", level="warning", code=None, 
                    msg="signal 'clk' has value 123", raw="raw1"),
@@ -128,7 +128,7 @@ class TestClusterLogs:
         assert error_cluster.id.startswith("cluster_")
     
     def test_cluster_logs_identical_messages(self):
-        """Test clustering with identical messages."""
+        """Test clustering with identical messages"""
         items = [
             LogItem(tool="iverilog", level="warning", code=None, 
                    msg="signal 'clk' is not connected", raw="raw1"),
@@ -146,14 +146,14 @@ class TestClusterLogs:
         assert clusters[0].id == "cluster_0"
     
     def test_cluster_logs_empty_input(self):
-        """Test clustering with empty input."""
+        """Test clustering with empty input"""
         items = []
         clusters = cluster_logs(items)
         
         assert len(clusters) == 0
     
     def test_cluster_logs_single_item(self):
-        """Test clustering with single item."""
+        """Test clustering with single item"""
         items = [
             LogItem(tool="iverilog", level="warning", code=None, 
                    msg="signal 'clk' is not connected", raw="raw1"),
@@ -167,7 +167,7 @@ class TestClusterLogs:
         assert clusters[0].items[0] == items[0]
     
     def test_cluster_logs_key_template_generation(self):
-        """Test that cluster keys are properly templated."""
+        """Test that cluster keys are properly templated"""
         items = [
             LogItem(tool="iverilog", level="warning", code=None, 
                    msg="signal 'clk' has value 123", raw="raw1"),
@@ -185,7 +185,7 @@ class TestClusterLogs:
         assert "signal" in cluster.key
     
     def test_cluster_logs_preserves_original_items(self):
-        """Test that original LogItem objects are preserved in clusters."""
+        """Test that original LogItem objects are preserved in clusters"""
         items = [
             LogItem(tool="iverilog", level="warning", code=None, 
                    msg="signal 'clk' is not connected", raw="raw1"),
@@ -204,7 +204,7 @@ class TestClusterLogs:
         assert cluster.items[1].raw == "raw2"
     
     def test_cluster_logs_multiple_different_patterns(self):
-        """Test clustering with multiple different message patterns."""
+        """Test clustering with multiple different message patterns"""
         items = [
             LogItem(tool="iverilog", level="warning", code=None, 
                    msg="signal 'clk' has value 123", raw="raw1"),
