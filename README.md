@@ -8,7 +8,7 @@ The EDA-AI-Assistant is an intelligent log analysis pipeline that processes Icar
 
 ## Why it matters
 
-This project directly addresses the critical need for AI-driven automation in semiconductor design workflows, mirroring the industry's push toward intelligent tooling that reduces manual debugging time and accelerates time-to-market for complex chip designs. By automating the analysis of EDA tool outputs—a traditionally time-intensive manual process—this system enables engineering teams to focus on design innovation rather than log parsing, supporting the broader semiconductor industry's transition to AI-enhanced development environments.
+This project directly addresses the critical need for AI-driven automation in semiconductor design workflows, mirroring the industry's push toward intelligent tooling that reduces manual debugging time and accelerates time-to-market for complex chip designs. By automating the analysis of EDA tool outputs, a traditionally time-intensive manual process, this system enables engineering teams to focus on design innovation rather than log parsing, supporting the broader semiconductor industry's transition to AI-enhanced development environments.
 
 ## How to run
 
@@ -19,16 +19,21 @@ pip install -r requirements.txt
 # Set up environment (add your Gemini API key)
 echo "GEMINI_API_KEY=your_key_here" > .env
 
-# Run the analysis pipeline with sample data
-python -m src.ai_logs.main --iverilog-log data/verilog_small.log --yosys-log data/yosys_small.log
+# Run the analysis pipeline with small sample data
+python -m src.ai_logs.main --iverilog-log ../data/verilog_small.log --yosys-log ../data/yosys_small.log
+
+# With large sample data
+python -m src.ai_logs.main --iverilog-log ../data/verilog_large.log --yosys-log ../data/yosys_large.log
 ```
 
-**Sample Output:** [View Generated Report](src/data/reports/report.md) - See the AI-generated analysis of EDA tool logs with intelligent explanations and suggested fixes.
-Note that some clusters with `warning` and `info` labels will not have a summary or explanation which is intended by design. 
+**Sample Output[MD]:** [View Generated Report](src/data/reports/report.md) - See the AI-generated analysis of EDA tool logs with intelligent explanations and suggested fixes.  
+**Sample Output[JSON]:** [View Generated Report](src/data/processed/results.json) - See the AI-generated analysis of EDA tool logs with intelligent explanations and suggested fixes.
+
+> Note that some clusters with `warning` and `info` labels will not have a summary or suggested_fixes unless they are recurring, which is intended by design.
 
 ## Feedback loop
 
-Continuous improvement is built into the system through an integrated feedback mechanism. Users can provide feedback on AI-generated explanations and suggested fixes via the embedded feedback form in each generated report. This iterative feedback loop drives model refinement and ensures the tool evolves with real-world engineering challenges. The system is designed for extensibility—future versions will support additional EDA tools (Synopsys, Cadence), enhanced clustering algorithms, and integration with CI/CD pipelines for automated design validation.
+Continuous improvement is built into the system through an integrated feedback mechanism. Users can provide feedback on AI-generated explanations and suggested fixes via the embedded feedback form in each generated report. This iterative feedback loop drives model refinement and ensures the tool evolves with real-world engineering challenges. The system is designed for extensibility, future versions will support additional EDA tools (Synopsys, Cadence), enhanced clustering algorithms, and integration with a more robust CI/CD pipelines for automated design validation.
 
 ## Tech
 
@@ -46,6 +51,21 @@ Continuous improvement is built into the system through an integrated feedback m
 - Extensible tool support framework
 - Robust error handling and fallback mechanisms
 - Comprehensive test coverage with pytest
+
+**Testing:**
+
+```bash
+# Run the test suite
+python -m pytest src/tests/ -v
+
+# Run specific test modules
+python -m pytest src/tests/test_parse.py -v
+python -m pytest src/tests/test_normalize.py -v
+python -m pytest src/tests/test_summarize.py -v
+python -m pytest src/tests/test_report.py -v
+```
+
+The test suite covers all core functionality including log parsing, clustering algorithms, AI integration, and report generation. Tests validate both individual components and end-to-end pipeline behavior.
 
 **Semiconductor Design Integration:**
 
