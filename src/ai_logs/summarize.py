@@ -10,8 +10,8 @@ def has_no_key_heuristic(cluster: Cluster) -> bool:
       has_error_or_warnings = True
       break
   
-  for placeholder in cluster.key:
-    if placeholder in ['<NUM>', '<SIG>', '<ID>']:
+  for placeholder in ['<NUM>', '<SIG>', '<ID>']:
+    if placeholder in cluster.key:
       has_placeholders = True
       break
   
