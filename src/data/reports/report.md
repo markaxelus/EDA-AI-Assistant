@@ -3,46 +3,45 @@
 - Total clusters: **6**
 - Feedback: [https://example.com/feedback](https://example.com/feedback)
 
-## Cluster cluster_0 — signal '<SIG>' is not connected to any module ports.
+## Cluster cluster_0 — signal '`<SIG>`' is not connected to any module ports.
 - Count: **1** | Tool: `iverilog`
 - Severity: `warning`
 
 **Explanation**
-This warning from iverilog indicates that a declared wire or reg signal within your Verilog module or testbench is not actively used for connecting to any port of an instantiated sub-module, nor is it assigned a value or used in any logic expression. It suggests a potentially redundant or unused signal declaration.
+This warning indicates that a declared signal (wire or reg) within a Verilog module is not connected to any of the current module's ports, nor is it connected to any ports of sub-modules instantiated within it. This suggests the signal is either unused, misspelled in a connection, or part of an incomplete design.
 
 **Suggested fixes**
-- If the signal is genuinely unused and not required, remove its declaration to simplify the code.
-- If the signal was intended to connect to a sub-module port, verify the module instantiation and port mapping to ensure the signal is correctly associated with an actual port.
-- If the signal should be driven by or drive other logic within the module, ensure there are proper assignments or usages for it.
-- If the signal is intentionally declared but unused (e.g., for future expansion or debug), you can ignore the warning, though it's good practice to comment its purpose.
+- Remove the signal declaration if it is genuinely unused and not intended for future use, to clean up the code.
+- Verify the signal name for typos in port connections to sub-modules or when connecting to the parent module's ports.
+- Ensure the signal is properly driven or assigned a value, or correctly connected to a port of an instantiated sub-module or the current module's ports.
 
-## Cluster cluster_1 — syntax error near '<SIG>'
+## Cluster cluster_1 — syntax error near '`<SIG>`'
 - Count: **1** | Tool: `iverilog`
 - Severity: `error`
 
 **Explanation**
-This iverilog error signifies a Verilog syntax violation, typically caused by a missing statement terminator (semicolon) or an unclosed code block (e.g., `begin...end`, `always`, `initial`) immediately preceding the `endmodule` keyword. The parser encountered `endmodule` when it expected a different token to complete a previous construct or statement.
+This error signifies a violation of Verilog syntax rules, where the iverilog parser encountered the `endmodule` keyword at an unexpected location. This typically means the actual error is in the lines immediately preceding `endmodule`, such as an incomplete statement, an unclosed block, or a missing punctuation mark that causes `endmodule` to appear prematurely or out of context.
 
 **Suggested fixes**
-- Check for a missing semicolon (`;`) at the end of the statement or declaration on the line immediately preceding the `endmodule` keyword.
-- Ensure all `begin` blocks have a corresponding `end` and that `always` or `initial` blocks are properly terminated before `endmodule`.
-- Verify that `endmodule` is not prematurely placed or nested within another module or block definition.
-- Examine the lines just before `endmodule` for any other Verilog syntax issues, such as unmatched parentheses, brackets, or incorrect keyword usage.
+- Check for a missing semicolon (`;`) on the statement directly preceding `endmodule` or any other statement within the module.
+- Ensure all block constructs like `begin...end`, `case...endcase`, `function...endfunction`, `task...endtask`, and `specify...endspecify` are correctly opened and closed.
+- Verify that there are no unclosed parentheses `()` or square brackets `[]` within expressions, port lists, or array declarations.
+- Review the code lines immediately before `endmodule` for typos, incorrect keywords, or illegal characters.
 
-## Cluster cluster_2 — Unable to elaborate module '<SIG>'.
+## Cluster cluster_2 — Unable to elaborate module '`<SIG>`'.
 - Count: **1** | Tool: `iverilog`
 - Severity: `error`
 
 **Explanation**
-Elaboration is the process where iverilog builds the design hierarchy, resolves module instances, and creates a simulation model. This error signifies that the simulator could not find the definition for the specified module or encountered a critical issue while attempting to instantiate it, thereby preventing the creation of the executable simulation model.
+This error indicates that iverilog could not find the definition of the specified module or resolve its hierarchy during the elaboration phase. This usually happens when the source file containing the module definition is not included in the compilation, or there's a mismatch in the module name.
 
 **Suggested fixes**
-- Ensure all Verilog/SystemVerilog source files containing module definitions, including the specified module and any modules it instantiates, are explicitly passed to the iverilog command.
-- Verify that the module name in the instantiation (e.g., `counter_tb u_dut (...)`) exactly matches the module definition (e.g., `module counter_tb (...);`) including case-sensitivity.
-- Check the source file containing the definition of the specified module for any syntax errors, as parsing failures can lead to elaboration issues.
-- If the module's definition is in a file located in a different directory, use `iverilog -I <path>` or `iverilog +incdir+<path>` to add the directory to iverilog's search path.
+- Ensure all Verilog source files that define the module and any sub-modules are included in the `iverilog` command.
+- Verify the exact module name matches between its definition (`module <name> ... endmodule`) and its instantiation or top-level specification.
+- Check for syntax errors within the module's definition or its instantiation that might prevent successful parsing.
+- If using include directories (`-I` option), confirm the paths are correct and the module's definition file is located within one of them.
 
-## Cluster cluster_3 — Executing Verilog-<NUM> frontend.
+## Cluster cluster_3 — Executing Verilog-`<NUM>` frontend.
 - Count: **1** | Tool: `yosys`
 - Severity: `info`
 
@@ -62,14 +61,14 @@ _(no summary)_
 **Suggested fixes**
 - (none)
 
-## Cluster cluster_5 — Parser error in line <NUM>: syntax error, unexpected END.
+## Cluster cluster_5 — Parser error in line `<NUM>`: syntax error, unexpected END.
 - Count: **1** | Tool: `yosys`
 - Severity: `error`
 
 **Explanation**
-EXPLANATION:
+This Yosys parser error indicates that an opened Verilog/SystemVerilog construct (such as a module, always block, if statement, case statement, function, or task) was never properly closed with its corresponding `endmodule`, `end`, `endcase`, `endif`, etc., keyword, or there's an unmatched opening parenthesis/bracket, leading the parser to expect more code before reaching an unexpected end.
 
 **Suggested fixes**
-- Locate the specified line number and review the code for any missing closing keywords like `endmodule`, `end`, `endfunction`, `endtask` (for Verilog) or `end architecture`, `end entity`, `end process` (for VHDL).
-- Trace back from the reported line number to find an unclosed `module`, `always`, `initial`, `function`, `task`, `begin` (Verilog) or `entity`, `architecture`, `process`, `if` (VHDL) block.
-- Check for misplaced semicolons or other syntax errors on lines immediately preceding the reported line, as these can confuse the parser and lead it to prematurely end a block.
+- Locate line 12 and preceding lines to identify any missing closing keywords like `endmodule`, `end`, `endcase`, `endif`, `endfunction`, or `endtask` for an opened block.
+- Check for unbalanced parentheses `()`, square brackets `[]`, or curly braces `{}` which can confuse the parser about block boundaries.
+- Review the code for typos in closing keywords (e.g., `emd` instead of `end`) or misplaced semicolons that could prevent the parser from recognizing block termination.

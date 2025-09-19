@@ -99,6 +99,7 @@ def parse_summary_response(response_text: str, cluster_id: int) -> Summary:
 def generate_summary_with_gemini(cluster: Cluster) -> Optional[Summary]:
   if not GEMINI_AVAILABLE:
     print("Gemini API not available; google-genai package not installed")
+    return None
   try:
     client = genai.Client()
 
