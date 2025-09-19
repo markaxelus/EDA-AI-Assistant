@@ -9,7 +9,32 @@ except ImportError:
   GEMINI_AVAILABLE = False
 
 def create_summary_prompt(cluster: Cluster) -> str:
-  return
+  # Use the first 3 msgs in the cluster as example for now (future_work-validate performance & quality under different sample sizes)
+  sample_messages = [item.msg for item in cluster.items[:3]]  
+  tool_types = list(set(item.tool for item in cluster.items))
+  levels = list(set(item.level for item in cluster.items))
+  prompt = f"""
+    You are an expert in Electronic Design Automation (EDA) tools. Analyze the following log messages and provide a clear explanation and suggested fixes.
+    Tool(s): {', '.join(tool_types)}
+    Severity: {', '.join(levels)}
+    Occurrences: {cluster.count}
+    Message template: {cluster.key}
+
+    Sample messages:
+    {chr(10).join(f"- {msg}" for msg in sample_messages)}
+
+    Please provide:
+    1. A clear explanation of what this error/warning means
+    2. 2-3 specific, actionable suggested fixes
+
+    Format your response as:
+    EXPLANATION: [your explanation here]
+    FIXES:
+    - <fix 1>
+    - <fix 2>
+    - <fix 3>
+  """
+  return prompt
 
 def parse_summary_response(response_text: str, cluster_id: int) -> Summary:
   """
