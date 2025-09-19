@@ -1,9 +1,14 @@
 import io
+import os
 import sys
 from pathlib import Path
 import pytest
+from dotenv import load_dotenv
 from ai_logs.summarize import has_no_key_heuristic, summarize_clusters
 from ai_logs.schema import LogItem, Cluster
+
+# Load environment variables from .env file
+load_dotenv()
 
 SRC_DIR = Path(__file__).resolve().parents[1]
 if str(SRC_DIR) not in sys.path:
@@ -139,9 +144,10 @@ class TestSummarizeClusters:
     
     assert len(summaries) == 0
 
-  @pytest.mark.skip(reason="Requires GEMINI_API_KEY environment variable")
+  @pytest.mark.skipif(not os.getenv("GEMINI_API_KEY"), reason="Requires GEMINI_API_KEY environment variable")
   def test_summarize_clusters_with_api(self):
     """Test summarize_clusters with actual API call (requires API key)."""
+    print("Running Gemini Summary Test")
     items = [
         LogItem(tool="iverilog", level="error", code=None, 
                 msg="signal 'clk' has value 123", raw="raw1"),

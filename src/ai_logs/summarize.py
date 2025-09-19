@@ -1,5 +1,6 @@
 from typing import List
 from .schema import Cluster, Summary
+from .gemini_ai import generate_summary_with_gemini, create_fallback_summary
 
 def has_no_key_heuristic(cluster: Cluster) -> bool:
   has_error_or_warnings = False
