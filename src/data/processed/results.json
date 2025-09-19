@@ -1,0 +1,114 @@
+{
+  "clusters": [
+    {
+      "id": "cluster_0",
+      "key": "signal '<SIG>' is not connected to any module ports.",
+      "count": 1,
+      "items": [
+        {
+          "tool": "iverilog",
+          "level": "warning",
+          "code": null,
+          "msg": "signal 'clk' is not connected to any module ports.",
+          "raw": "iverilog: warning: signal 'clk' is not connected to any module ports."
+        }
+      ]
+    },
+    {
+      "id": "cluster_1",
+      "key": "syntax error near \"endmodule\"",
+      "count": 1,
+      "items": [
+        {
+          "tool": "iverilog",
+          "level": "error",
+          "code": null,
+          "msg": "syntax error near \"endmodule\"",
+          "raw": "iverilog: error: syntax error near \"endmodule\""
+        }
+      ]
+    },
+    {
+      "id": "cluster_2",
+      "key": "Unable to elaborate module \"counter_tb\".",
+      "count": 1,
+      "items": [
+        {
+          "tool": "iverilog",
+          "level": "error",
+          "code": null,
+          "msg": "Unable to elaborate module \"counter_tb\".",
+          "raw": "iverilog: error: Unable to elaborate module \"counter_tb\"."
+        }
+      ]
+    },
+    {
+      "id": "cluster_3",
+      "key": "Executing Verilog-<NUM> frontend.",
+      "count": 1,
+      "items": [
+        {
+          "tool": "yosys",
+          "level": "info",
+          "code": "step:1",
+          "msg": "Executing Verilog-2005 frontend.",
+          "raw": "1. Executing Verilog-2005 frontend."
+        }
+      ]
+    },
+    {
+      "id": "cluster_4",
+      "key": "signal top.clk has no driver.",
+      "count": 1,
+      "items": [
+        {
+          "tool": "yosys",
+          "level": "warning",
+          "code": null,
+          "msg": "signal top.clk has no driver.",
+          "raw": "Warning: signal top.clk has no driver."
+        }
+      ]
+    },
+    {
+      "id": "cluster_5",
+      "key": "Parser error in line <NUM>: syntax error, unexpected END.",
+      "count": 1,
+      "items": [
+        {
+          "tool": "yosys",
+          "level": "error",
+          "code": null,
+          "msg": "Parser error in line 12: syntax error, unexpected END.",
+          "raw": "ERROR: Parser error in line 12: syntax error, unexpected END."
+        }
+      ]
+    }
+  ],
+  "summaries": {
+    "cluster_0": {
+      "cluster_id": 0,
+      "explanation": "Unable to parse explanation from AI response",
+      "suggested_fixes": [
+        "**Establish intended connections (if the signal *should* be connected):**",
+        "**Remove unused signal (if not intended for use):** If the signal was declared but is genuinely not used anywhere within the module, nor intended to be connected externally, simply remove its declaration. This often happens during refactoring, or if a signal was part of an earlier design iteration. Removing it cleans up the code and eliminates the warning.",
+        "**Correct typos or logic errors in internal usage:** Sometimes the signal *is* meant to be used internally (e.g., as part of an `assign` statement or a procedural block), but a typo in its name prevents it from being correctly referenced. For instance, if you declare `logic clk;` but then accidentally use `clok` in an `always @(posedge clok)` block, `iverilog` will correctly flag `clk` as unused. Carefully review all instances where the signal is intended to be used (drivers and loads) and ensure consistent naming."
+      ]
+    },
+    "cluster_5": {
+      "cluster_id": 5,
+      "explanation": "Unable to parse explanation from AI response",
+      "suggested_fixes": [
+        "**Inspect `line <NUM>` and Preceding Lines for Missing Openers:** Go directly to the reported line number in your HDL file. The most common cause is a missing opening construct. Carefully check the lines *above* the error line for omitted keywords such as `module`, `function`, `task`, `always`, `initial`, `if`, `case`, `fork`, `begin`, or `generate`. Ensure every block that you intend to close with an `end` keyword has been properly opened.",
+        "**Verify Block Pairing and Correct Closing Keywords:** Ensure all block-opening keywords have their correct corresponding closing keyword. For example:",
+        "`module` must be closed by `endmodule`.",
+        "`function` by `endfunction`.",
+        "`task` by `endtask`.",
+        "`always`, `initial`, `fork`, `begin` are closed by `end`.",
+        "`case` by `endcase`.",
+        "`if` in SystemVerilog often requires `endif`.",
+        "**Check for Syntax Errors Immediately Before the `END`:** Although the error points to the `END` keyword, a syntax error on the line *just before* it could confuse the parser. For example, a missing semicolon, an unclosed parenthesis, or an incorrect declaration might cause the parser to misinterpret the structure of your code, leading it to believe a block is closed prematurely or that the `END` is out of place. Carefully review the syntax of the statement directly preceding `line <NUM>`."
+      ]
+    }
+  }
+}
