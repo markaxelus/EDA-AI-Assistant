@@ -18,7 +18,7 @@ def make_markdown(clusters: List[Cluster], summaries: Dict[str, Summary], feedba
               f"- Severity: `{most_severe}`",
               "",
               "**Explanation**",
-              s.explanation if s else "_(no summary)_",
+              (s.explanation if (s and s.explanation.strip()) else "_(no summary)_"),
               "",
               "**Suggested fixes**"]
     if s and s.suggested_fixes:

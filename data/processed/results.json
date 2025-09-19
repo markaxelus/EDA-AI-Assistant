@@ -1,0 +1,129 @@
+{
+  "clusters": [
+    {
+      "id": "cluster_0",
+      "key": "signal '<SIG>' is not connected to any module ports.",
+      "count": 1,
+      "items": [
+        {
+          "tool": "iverilog",
+          "level": "warning",
+          "code": null,
+          "msg": "signal 'clk' is not connected to any module ports.",
+          "raw": "iverilog: warning: signal 'clk' is not connected to any module ports."
+        }
+      ]
+    },
+    {
+      "id": "cluster_1",
+      "key": "syntax error near '<SIG>'",
+      "count": 1,
+      "items": [
+        {
+          "tool": "iverilog",
+          "level": "error",
+          "code": null,
+          "msg": "syntax error near \"endmodule\"",
+          "raw": "iverilog: error: syntax error near \"endmodule\""
+        }
+      ]
+    },
+    {
+      "id": "cluster_2",
+      "key": "Unable to elaborate module '<SIG>'.",
+      "count": 1,
+      "items": [
+        {
+          "tool": "iverilog",
+          "level": "error",
+          "code": null,
+          "msg": "Unable to elaborate module \"counter_tb\".",
+          "raw": "iverilog: error: Unable to elaborate module \"counter_tb\"."
+        }
+      ]
+    },
+    {
+      "id": "cluster_3",
+      "key": "Executing Verilog-<NUM> frontend.",
+      "count": 1,
+      "items": [
+        {
+          "tool": "yosys",
+          "level": "info",
+          "code": "step:1",
+          "msg": "Executing Verilog-2005 frontend.",
+          "raw": "1. Executing Verilog-2005 frontend."
+        }
+      ]
+    },
+    {
+      "id": "cluster_4",
+      "key": "signal top.clk has no driver.",
+      "count": 1,
+      "items": [
+        {
+          "tool": "yosys",
+          "level": "warning",
+          "code": null,
+          "msg": "signal top.clk has no driver.",
+          "raw": "Warning: signal top.clk has no driver."
+        }
+      ]
+    },
+    {
+      "id": "cluster_5",
+      "key": "Parser error in line <NUM>: syntax error, unexpected END.",
+      "count": 1,
+      "items": [
+        {
+          "tool": "yosys",
+          "level": "error",
+          "code": null,
+          "msg": "Parser error in line 12: syntax error, unexpected END.",
+          "raw": "ERROR: Parser error in line 12: syntax error, unexpected END."
+        }
+      ]
+    }
+  ],
+  "summaries": {
+    "cluster_0": {
+      "cluster_id": 0,
+      "explanation": "This iverilog warning indicates that a declared signal (wire, reg, etc.) within a module or testbench exists in the design but is not connected to any of the module's declared input, output, or inout ports. This often points to an unused declaration, an incomplete connection, a typo, or a missing assignment/observation in a testbench.",
+      "suggested_fixes": [
+        "If the signal is truly unused and not needed, remove its declaration from the module or testbench code.",
+        "Ensure the signal is correctly connected to an intended module port by either adding it to the port list or connecting it to internal logic that drives/is driven by a port.",
+        "Check for typos in the signal name or the module port name that might be preventing the intended connection.",
+        "In a testbench, ensure input signals to the Device Under Test (DUT) are being driven and output signals from the DUT are being observed or connected."
+      ]
+    },
+    "cluster_1": {
+      "cluster_id": 1,
+      "explanation": "This error indicates a syntax violation occurring *before* the `endmodule` keyword. While `endmodule` itself may be correctly spelled, its appearance at that specific point is unexpected by the parser because a preceding statement, block, or declaration is incomplete or malformed, causing the parser to become desynchronized.",
+      "suggested_fixes": [
+        "Check for missing semicolons at the end of statements (e.g., assignments, declarations, module instantiations) on lines preceding `endmodule`.",
+        "Verify that all opened blocks (e.g., `begin...end`, `case...endcase`, `fork...join`, `generate...endgenerate`) are properly closed with their corresponding `end` or `endcase` keywords.",
+        "Review declarations (parameters, ports, wires, regs, logic) and module instantiations for correct syntax, including commas and proper type/width specifications.",
+        "Inspect the lines just before `endmodule` for any typos in keywords, variable names, or other syntactical errors."
+      ]
+    },
+    "cluster_2": {
+      "cluster_id": 2,
+      "explanation": "The iverilog elaborator failed to locate or correctly interpret the definition of the specified module. This often indicates that the module's source file was not included in the compilation command, the module name is misspelled, or there are fundamental syntax errors within the module preventing its proper parsing.",
+      "suggested_fixes": [
+        "Ensure all source files required for the design, including the one defining the indicated module, are passed to the `iverilog` command.",
+        "Verify that the module name used in the instantiation (e.g., in the testbench) precisely matches the module definition (case-sensitive).",
+        "Check the module's source code for syntax errors, especially for a missing `endmodule` statement or other structural issues that could prevent its proper definition from being parsed.",
+        "If the module resides in a different directory, use the `-y <directory>` option with `iverilog` to add that directory to the search path."
+      ]
+    },
+    "cluster_5": {
+      "cluster_id": 5,
+      "explanation": "Yosys encountered an `end` keyword at line <NUM> that does not have a matching opening construct like `module`, `function`, `task`, `begin`, `if`, or `case`. This often indicates an unclosed block, an `end` that is misplaced, or a typo that resulted in an unexpected `end` keyword.",
+      "suggested_fixes": [
+        "Review line <NUM> and the preceding lines for unclosed blocks such as `module`, `function`, `task`, `begin`, `if`, or `case` statements that are missing their corresponding `endmodule`, `endfunction`, `endtask`, `end`, `endif`, or `endcase`.",
+        "Check for misspellings or incorrect usage of `end` keywords. For example, an `end` might be present where `endmodule` or `endif` was intended.",
+        "Ensure that all nested blocks (e.g., `begin...end` inside `always` blocks) are correctly balanced and closed with their appropriate `end` statements."
+      ]
+    }
+  }
+}
