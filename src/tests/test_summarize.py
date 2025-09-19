@@ -166,7 +166,7 @@ class TestSummarizeClusters:
     summaries = summarize_clusters(clusters)
     
     if len(summaries) > 0:
-        summary = summaries[0]
+        summary = next(iter(summaries.values()))
         assert summary.cluster_id == 0
         assert len(summary.explanation) > 0
         assert len(summary.suggested_fixes) > 0
