@@ -95,8 +95,15 @@ def generate_summary_with_gemini(cluster: Cluster) -> Optional[Summary]:
     print(f"Error generating summary for cluster: {cluster.id}: {e}")
     return None
 
-def generate_gemini_summary():
-    return
-
 def create_fallback_summary(): 
-    return
+  cluster_id = int(cluster.id.split('_')[1])
+  
+  return Summary(
+      cluster_id=cluster_id,
+      explanation=f"This cluster contains {cluster.count} {cluster.items[0].level}(s) with the pattern: {cluster.key}",
+      suggested_fixes=[
+          "Review the specific log messages for detailed information",
+          "Check the EDA tool documentation for this error type",
+          "Verify your design files for common issues"
+      ]
+  )
