@@ -13,7 +13,9 @@ def make_markdown(clusters: List[Cluster], summaries: Dict[str, Summary], feedba
     severity_order = {'error': 3, 'warning': 2, 'info': 1}
     most_severe = max(severity_levels, key=lambda x: severity_order.get(x, 0))
 
-    lines += [f"## Cluster {element.id} — {element.key}",
+    # Escape angle brackets in the key to prevent HTML interpretation in markdown
+    escaped_key = element.key.replace('<', '&lt;').replace('>', '&gt;')
+    lines += [f"## Cluster {element.id} — {escaped_key}",
               f"- Count: **{element.count}** | Tool: `{element.items[0].tool if element.items else 'n/a'}`",
               f"- Severity: `{most_severe}`",
               "",
