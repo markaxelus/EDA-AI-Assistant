@@ -20,3 +20,18 @@ def has_no_key_heuristic(cluster: Cluster) -> bool:
   
   return has_error_or_warnings and (has_placeholders or is_recurring)
 
+def summarize_clusters(clusters: List[Cluster]) -> List[Summary]:
+  summaries = []
+
+  for cluster in clusters:
+    if has_no_key_heuristic(cluster):
+      print(f"Generating summary for cluster {cluster.id}...")
+      summary = generate_summary_with_gemini(cluster)
+      if summary:
+        summaries.append(summary)
+      else:
+        print(f"Failed to generate summary for cluster {cluster.id}")
+
+  return summaries
+
+
