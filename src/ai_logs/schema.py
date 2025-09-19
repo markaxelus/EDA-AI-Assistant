@@ -21,4 +21,4 @@ class Summary(BaseModel):
 
 class Results(BaseModel):
   clusters: List[Cluster]
-  summaries: List[Summary]
+  summaries: Dict[str, Summary]
