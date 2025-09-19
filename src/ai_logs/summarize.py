@@ -27,6 +27,7 @@ def summarize_clusters(clusters: List[Cluster]) -> Dict[str, Summary]:
   for cluster in clusters:
     if has_no_key_heuristic(cluster):
       print(f"Generating summary for cluster {cluster.id}...")
+      print(list(summaries.keys()))
       summary = generate_summary_with_gemini(cluster)
       if summary:
         summaries[cluster.id] = summary

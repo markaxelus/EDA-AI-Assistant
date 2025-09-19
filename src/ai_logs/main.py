@@ -32,7 +32,7 @@ def run(
   out_json: str = typer.Option("data/processed/results.json", help="Path to write structured JSON results"),
   out_md: str = typer.Option("data/reports/report.md", help="Path to write Markdown report"),
 ):
-  """Run the full pipeline on the provided logs and generate a report."""
+  """Run the full pipeline on the provided logs and generate a report"""
   load_dotenv()
 
   items = []

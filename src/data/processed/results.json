@@ -88,40 +88,41 @@
   "summaries": {
     "cluster_0": {
       "cluster_id": 0,
-      "explanation": "This warning indicates that a declared signal within a module does not serve as an input/output port for that module and is also not connected to any internal logic or sub-module ports, suggesting it is either redundant or a design oversight.",
+      "explanation": "This warning from iverilog indicates that a declared wire or reg signal within your Verilog module or testbench is not actively used for connecting to any port of an instantiated sub-module, nor is it assigned a value or used in any logic expression. It suggests a potentially redundant or unused signal declaration.",
       "suggested_fixes": [
-        "If the signal is intended to be an external interface, add it to the module's port list (e.g., `input clk`, `output data`).",
-        "If the signal is meant for internal logic, connect it to the relevant statements or instantiate a sub-module that uses it.",
-        "If the signal is truly unneeded and serves no purpose, remove its declaration to eliminate the warning and clean up the code."
+        "If the signal is genuinely unused and not required, remove its declaration to simplify the code.",
+        "If the signal was intended to connect to a sub-module port, verify the module instantiation and port mapping to ensure the signal is correctly associated with an actual port.",
+        "If the signal should be driven by or drive other logic within the module, ensure there are proper assignments or usages for it.",
+        "If the signal is intentionally declared but unused (e.g., for future expansion or debug), you can ignore the warning, though it's good practice to comment its purpose."
       ]
     },
     "cluster_1": {
       "cluster_id": 1,
-      "explanation": "The `iverilog` parser encountered the token \"endmodule\" at an unexpected point, indicating a syntax violation in the code preceding it. This typically means a statement or block was not properly terminated or completed, or a structural element like a `begin...end` block was left unclosed, causing the parser to interpret `endmodule` as an error.",
+      "explanation": "This iverilog error signifies a Verilog syntax violation, typically caused by a missing statement terminator (semicolon) or an unclosed code block (e.g., `begin...end`, `always`, `initial`) immediately preceding the `endmodule` keyword. The parser encountered `endmodule` when it expected a different token to complete a previous construct or statement.",
       "suggested_fixes": [
-        "Examine the line immediately preceding `endmodule` for a missing semicolon (`;`).",
-        "Verify that all `begin` statements have a corresponding `end` and all `case` statements have an `endcase` within the module.",
-        "Check for any unclosed parentheses `()` or square brackets `[]` in signal declarations, instantiations, or assignments before `endmodule`.",
-        "Ensure all module ports, parameters, and local declarations are correctly terminated and complete before the `endmodule` keyword."
+        "Check for a missing semicolon (`;`) at the end of the statement or declaration on the line immediately preceding the `endmodule` keyword.",
+        "Ensure all `begin` blocks have a corresponding `end` and that `always` or `initial` blocks are properly terminated before `endmodule`.",
+        "Verify that `endmodule` is not prematurely placed or nested within another module or block definition.",
+        "Examine the lines just before `endmodule` for any other Verilog syntax issues, such as unmatched parentheses, brackets, or incorrect keyword usage."
       ]
     },
     "cluster_2": {
       "cluster_id": 2,
-      "explanation": "The `iverilog` tool failed during the \"elaboration\" phase, which is when it attempts to build the hierarchical structure of your design by instantiating modules and resolving their connections. This error typically means the specified module (e.g., \"counter_tb\") could not be found or processed due to a missing source file, a typo, or critical syntax errors preventing its proper definition from being parsed.",
+      "explanation": "Elaboration is the process where iverilog builds the design hierarchy, resolves module instances, and creates a simulation model. This error signifies that the simulator could not find the definition for the specified module or encountered a critical issue while attempting to instantiate it, thereby preventing the creation of the executable simulation model.",
       "suggested_fixes": [
-        "Ensure all Verilog source files defining the module and its submodules are included in the `iverilog` command line.",
-        "Verify the module name (e.g., \"counter_tb\") in the error message exactly matches its definition (`module counter_tb(...)`) and any instantiation references, checking for typos.",
-        "Inspect the source file for the problematic module for any syntax errors that might prevent `iverilog` from successfully parsing and defining it.",
-        "If the module is intended as the top-level, ensure it is either the sole top-level module or explicitly specified using the `-s` option (e.g., `iverilog -s counter_tb -o sim.vvp counter_tb.v`)."
+        "Ensure all Verilog/SystemVerilog source files containing module definitions, including the specified module and any modules it instantiates, are explicitly passed to the iverilog command.",
+        "Verify that the module name in the instantiation (e.g., `counter_tb u_dut (...)`) exactly matches the module definition (e.g., `module counter_tb (...);`) including case-sensitivity.",
+        "Check the source file containing the definition of the specified module for any syntax errors, as parsing failures can lead to elaboration issues.",
+        "If the module's definition is in a file located in a different directory, use `iverilog -I <path>` or `iverilog +incdir+<path>` to add the directory to iverilog's search path."
       ]
     },
     "cluster_5": {
       "cluster_id": 5,
-      "explanation": "The Yosys parser encountered a closing keyword (e.g., `end`, `endmodule`, `endfunction`, `endcase`) at the specified line where it was not syntactically expected. This usually signifies an imbalance in block declarations, such as an extra closing keyword without a matching opening construct, or a preceding syntax error that has desynchronized the parser's state.",
+      "explanation": "EXPLANATION:",
       "suggested_fixes": [
-        "Check the code at and immediately preceding line 12 for an extra closing keyword (e.g., `end`, `endmodule`, `endfunction`, `endtask`, `endcase`, `endif`) that lacks a corresponding opening construct.",
-        "Verify that all `begin...end`, `case...endcase`, `if...else...endif`, `module...endmodule`, `function...endfunction`, and `task...endtask` blocks are correctly matched and properly nested.",
-        "Review the lines leading up to line 12 for any earlier syntax errors, such as missing semicolons, incorrect port declarations, or unclosed statements, which might have confused the parser."
+        "Locate the specified line number and review the code for any missing closing keywords like `endmodule`, `end`, `endfunction`, `endtask` (for Verilog) or `end architecture`, `end entity`, `end process` (for VHDL).",
+        "Trace back from the reported line number to find an unclosed `module`, `always`, `initial`, `function`, `task`, `begin` (Verilog) or `entity`, `architecture`, `process`, `if` (VHDL) block.",
+        "Check for misplaced semicolons or other syntax errors on lines immediately preceding the reported line, as these can confuse the parser and lead it to prematurely end a block."
       ]
     }
   }
