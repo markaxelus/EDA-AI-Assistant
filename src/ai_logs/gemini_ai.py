@@ -12,7 +12,41 @@ def create_summary_prompt(cluster: Cluster) -> str:
   return
 
 def parse_summary_response(response_text: str, cluster_id: int) -> Summary:
-  return
+  """
+    Goal: 
+      EXPLANATION: <some explanation text>
+      FIXES:
+      - <fix 1>
+      - <fix 2> 
+  """
+
+  explanation = ""
+  suggested_fixes = []
+  lines = response_text.split('\n')
+  current_section = None
+
+  for line in lines:
+    line = line.strip()
+    if line.startswith('EXPLANATION:'):
+      explanation = line.replace('EXPLANATION:', '').strip()
+      current_section = explanation
+    elif line.startswith('FIXES:'):
+      current_section = 'fixes'
+    elif current_section == 'fixes' and line.startswith('- '):
+      fix = line.replace('- ', '').strip()
+      if fix:
+        suggested_fixes.append(fix)
+
+  if not explanation:
+    explanation = "Unable to parse explanation from AI response"
+  if not suggested_fixes:
+    suggested_fixes = ["Review the log messages for specific detail"]
+  
+  return Summary(
+    cluster_id=cluster_id,
+    explanation=explanation,
+    suggested_fixes=suggested_fixes
+  )
 
 def generate_summary_with_gemini(cluster: Cluster) -> Optional[Summary]:
   if not GEMINI_AVAILABLE:
