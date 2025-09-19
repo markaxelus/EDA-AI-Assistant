@@ -99,6 +99,7 @@ class TestNoKeyHeuristic:
     assert has_no_key_heuristic(cluster) == True
 
   def test_heuristic_error_with_placeholders_nonrecurring(self):
+    """Test clusters with placeholders and non-recurring"""
     items = [
         LogItem(tool="iverilog", level="error", code=None,
                 msg="signal 'clk' has value 123", raw="raw1"),
@@ -111,3 +112,56 @@ class TestNoKeyHeuristic:
     )
 
     assert has_no_key_heuristic(cluster) == True
+
+class TestSummarizeClusters:
+  def test_summarize_clusters_empty_input(self):
+    """Test summarize_clusters with empty input."""
+    clusters = []
+    summaries = summarize_clusters(clusters)
+    
+    assert len(summaries) == 0
+  
+  def test_summarize_clusters_no_eligible_clusters(self):
+    """Test summarize_clusters with no clusters meeting heuristic."""
+    items = [
+        LogItem(tool="yosys", level="info", code="step:1", 
+                msg="Executing Verilog-2005 frontend.", raw="raw1"),
+    ]
+    
+    cluster = Cluster(
+        id="cluster_0",
+        key="Executing Verilog-2005 frontend.",
+        count=1,
+        items=items
+    )
+    
+    clusters = [cluster]
+    summaries = summarize_clusters(clusters)
+    
+    assert len(summaries) == 0
+
+  @pytest.mark.skip(reason="Requires GEMINI_API_KEY environment variable")
+  def test_summarize_clusters_with_api(self):
+    """Test summarize_clusters with actual API call (requires API key)."""
+    items = [
+        LogItem(tool="iverilog", level="error", code=None, 
+                msg="signal 'clk' has value 123", raw="raw1"),
+        LogItem(tool="iverilog", level="error", code=None, 
+                msg="signal 'reset' has value 456", raw="raw2"),
+    ]
+    
+    cluster = Cluster(
+        id="cluster_0",
+        key="signal '<SIG>' has value <NUM>",
+        count=2,
+        items=items
+    )
+    
+    clusters = [cluster]
+    summaries = summarize_clusters(clusters)
+    
+    if len(summaries) > 0:
+        summary = summaries[0]
+        assert summary.cluster_id == 0
+        assert len(summary.explanation) > 0
+        assert len(summary.suggested_fixes) > 0
