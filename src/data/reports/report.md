@@ -8,32 +8,38 @@
 - Severity: `warning`
 
 **Explanation**
-Unable to parse explanation from AI response
+This warning indicates that a declared signal within a module does not serve as an input/output port for that module and is also not connected to any internal logic or sub-module ports, suggesting it is either redundant or a design oversight.
 
 **Suggested fixes**
-- **Establish intended connections (if the signal *should* be connected):**
-- **Remove unused signal (if not intended for use):** If the signal was declared but is genuinely not used anywhere within the module, nor intended to be connected externally, simply remove its declaration. This often happens during refactoring, or if a signal was part of an earlier design iteration. Removing it cleans up the code and eliminates the warning.
-- **Correct typos or logic errors in internal usage:** Sometimes the signal *is* meant to be used internally (e.g., as part of an `assign` statement or a procedural block), but a typo in its name prevents it from being correctly referenced. For instance, if you declare `logic clk;` but then accidentally use `clok` in an `always @(posedge clok)` block, `iverilog` will correctly flag `clk` as unused. Carefully review all instances where the signal is intended to be used (drivers and loads) and ensure consistent naming.
+- If the signal is intended to be an external interface, add it to the module's port list (e.g., `input clk`, `output data`).
+- If the signal is meant for internal logic, connect it to the relevant statements or instantiate a sub-module that uses it.
+- If the signal is truly unneeded and serves no purpose, remove its declaration to eliminate the warning and clean up the code.
 
-## Cluster cluster_1 — syntax error near "endmodule"
+## Cluster cluster_1 — syntax error near '<SIG>'
 - Count: **1** | Tool: `iverilog`
 - Severity: `error`
 
 **Explanation**
-_(no summary)_
+The `iverilog` parser encountered the token "endmodule" at an unexpected point, indicating a syntax violation in the code preceding it. This typically means a statement or block was not properly terminated or completed, or a structural element like a `begin...end` block was left unclosed, causing the parser to interpret `endmodule` as an error.
 
 **Suggested fixes**
-- (none)
+- Examine the line immediately preceding `endmodule` for a missing semicolon (`;`).
+- Verify that all `begin` statements have a corresponding `end` and all `case` statements have an `endcase` within the module.
+- Check for any unclosed parentheses `()` or square brackets `[]` in signal declarations, instantiations, or assignments before `endmodule`.
+- Ensure all module ports, parameters, and local declarations are correctly terminated and complete before the `endmodule` keyword.
 
-## Cluster cluster_2 — Unable to elaborate module "counter_tb".
+## Cluster cluster_2 — Unable to elaborate module '<SIG>'.
 - Count: **1** | Tool: `iverilog`
 - Severity: `error`
 
 **Explanation**
-_(no summary)_
+The `iverilog` tool failed during the "elaboration" phase, which is when it attempts to build the hierarchical structure of your design by instantiating modules and resolving their connections. This error typically means the specified module (e.g., "counter_tb") could not be found or processed due to a missing source file, a typo, or critical syntax errors preventing its proper definition from being parsed.
 
 **Suggested fixes**
-- (none)
+- Ensure all Verilog source files defining the module and its submodules are included in the `iverilog` command line.
+- Verify the module name (e.g., "counter_tb") in the error message exactly matches its definition (`module counter_tb(...)`) and any instantiation references, checking for typos.
+- Inspect the source file for the problematic module for any syntax errors that might prevent `iverilog` from successfully parsing and defining it.
+- If the module is intended as the top-level, ensure it is either the sole top-level module or explicitly specified using the `-s` option (e.g., `iverilog -s counter_tb -o sim.vvp counter_tb.v`).
 
 ## Cluster cluster_3 — Executing Verilog-<NUM> frontend.
 - Count: **1** | Tool: `yosys`
@@ -60,15 +66,9 @@ _(no summary)_
 - Severity: `error`
 
 **Explanation**
-Unable to parse explanation from AI response
+The Yosys parser encountered a closing keyword (e.g., `end`, `endmodule`, `endfunction`, `endcase`) at the specified line where it was not syntactically expected. This usually signifies an imbalance in block declarations, such as an extra closing keyword without a matching opening construct, or a preceding syntax error that has desynchronized the parser's state.
 
 **Suggested fixes**
-- **Inspect `line <NUM>` and Preceding Lines for Missing Openers:** Go directly to the reported line number in your HDL file. The most common cause is a missing opening construct. Carefully check the lines *above* the error line for omitted keywords such as `module`, `function`, `task`, `always`, `initial`, `if`, `case`, `fork`, `begin`, or `generate`. Ensure every block that you intend to close with an `end` keyword has been properly opened.
-- **Verify Block Pairing and Correct Closing Keywords:** Ensure all block-opening keywords have their correct corresponding closing keyword. For example:
-- `module` must be closed by `endmodule`.
-- `function` by `endfunction`.
-- `task` by `endtask`.
-- `always`, `initial`, `fork`, `begin` are closed by `end`.
-- `case` by `endcase`.
-- `if` in SystemVerilog often requires `endif`.
-- **Check for Syntax Errors Immediately Before the `END`:** Although the error points to the `END` keyword, a syntax error on the line *just before* it could confuse the parser. For example, a missing semicolon, an unclosed parenthesis, or an incorrect declaration might cause the parser to misinterpret the structure of your code, leading it to believe a block is closed prematurely or that the `END` is out of place. Carefully review the syntax of the statement directly preceding `line <NUM>`.
+- Check the code at and immediately preceding line 12 for an extra closing keyword (e.g., `end`, `endmodule`, `endfunction`, `endtask`, `endcase`, `endif`) that lacks a corresponding opening construct.
+- Verify that all `begin...end`, `case...endcase`, `if...else...endif`, `module...endmodule`, `function...endfunction`, and `task...endtask` blocks are correctly matched and properly nested.
+- Review the lines leading up to line 12 for any earlier syntax errors, such as missing semicolons, incorrect port declarations, or unclosed statements, which might have confused the parser.

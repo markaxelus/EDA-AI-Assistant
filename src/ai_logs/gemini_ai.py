@@ -23,12 +23,8 @@ def create_summary_prompt(cluster: Cluster) -> str:
     Sample messages:
     {chr(10).join(f"- {msg}" for msg in sample_messages)}
 
-    Please provide:
-    1. A clear explanation of what this error/warning means
-    2. 2-3 specific, actionable suggested fixes
-
-    Format your response as:
-    EXPLANATION: [your explanation here]
+    Write ONLY in this exact format (no extra prose, no code fences, no markdown headings):
+    EXPLANATION: <one concise paragraph>
     FIXES:
     - <fix 1>
     - <fix 2>
@@ -44,28 +40,55 @@ def parse_summary_response(response_text: str, cluster_id: int) -> Summary:
       - <fix 1>
       - <fix 2> 
   """
+  text = response_text.strip()
+  if text.startswith("```") and text.endswith("```"):
+    text = text.strip('`')  # crude fence strip
+  lines = [ln.strip() for ln in text.split('\n') if ln.strip()]
 
   explanation = ""
-  suggested_fixes = []
-  lines = response_text.split('\n')
+  suggested_fixes: list[str] = []
+
   current_section = None
-
   for line in lines:
-    line = line.strip()
-    if line.startswith('EXPLANATION:'):
-      explanation = line.replace('EXPLANATION:', '').strip()
-      current_section = explanation
-    elif line.startswith('FIXES:'):
+    upper = line.upper()
+    if upper.startswith('EXPLANATION:'):
+      explanation = line.split(':', 1)[1].strip()
+      current_section = 'explanation'
+      continue
+    if upper.startswith('FIXES:'):
       current_section = 'fixes'
-    elif current_section == 'fixes' and line.startswith('- '):
-      fix = line.replace('- ', '').strip()
-      if fix:
-        suggested_fixes.append(fix)
+      continue
+    if current_section == 'fixes':
+      # Accept bullets "- ", "* ", or numbered lists "1. "
+      if line.startswith('- ') or line.startswith('* '):
+        fix = line[2:].strip()
+        if fix:
+          suggested_fixes.append(fix)
+        continue
+      if any(line[:2].isdigit() for _ in [0]) and '.' in line[:4]:
+        # naive numbered list like "1. fix"
+        fix = line.split('.', 1)[1].strip()
+        if fix:
+          suggested_fixes.append(fix)
 
-  if not explanation:
-    explanation = "Unable to parse explanation from AI response"
+  # Fallbacks if the model ignored headers
+  if not explanation and lines:
+    explanation = lines[0]
   if not suggested_fixes:
-    suggested_fixes = ["Review the log messages for specific detail"]
+    # Heuristic: collect any bullet-like lines anywhere
+    for line in lines[1:]:
+      if line.startswith('- ') or line.startswith('* '):
+        suggested_fixes.append(line[2:].strip())
+      elif any(line[:2].isdigit() for _ in [0]) and '.' in line[:4]:
+        suggested_fixes.append(line.split('.', 1)[1].strip())
+      if len(suggested_fixes) >= 3:
+        break
+  if not suggested_fixes:
+    suggested_fixes = [
+      "Review the log messages for specific details",
+      "Consult the tool documentation for this error type",
+      "Check design/testbench for common syntax and connectivity issues",
+    ]
   
   return Summary(
     cluster_id=cluster_id,
@@ -95,15 +118,17 @@ def generate_summary_with_gemini(cluster: Cluster) -> Optional[Summary]:
     print(f"Error generating summary for cluster: {cluster.id}: {e}")
     return None
 
-def create_fallback_summary(): 
+def create_fallback_summary(cluster: Cluster) -> Summary:
   cluster_id = int(cluster.id.split('_')[1])
-  
   return Summary(
-      cluster_id=cluster_id,
-      explanation=f"This cluster contains {cluster.count} {cluster.items[0].level}(s) with the pattern: {cluster.key}",
-      suggested_fixes=[
-          "Review the specific log messages for detailed information",
-          "Check the EDA tool documentation for this error type",
-          "Verify your design files for common issues"
-      ]
+    cluster_id=cluster_id,
+    explanation=(
+      f"This cluster contains {cluster.count} {cluster.items[0].level}(s) "
+      f"matching: {cluster.key}"
+    ),
+    suggested_fixes=[
+      "Review the specific log messages for details",
+      "Check tool documentation for this error/warning type",
+      "Verify design files and testbench for common issues",
+    ],
   )

@@ -6,7 +6,7 @@ from .schema import LogItem, Cluster
 
 NUM_PATTERN = re.compile(r'\b\d+\b')
 IDENTIFIER_PATTERN = re.compile(r'\b[a-zA-Z_][a-zA-Z0-9_]*\b')
-QUOTED_STRING_PATTERN = re.compile(r"'[^']*'")
+QUOTED_STRING_PATTERN = re.compile(r"(\"[^\"]*\"|'[^']*')")
 
 def fingerprint(msg: str) -> str:
     template = NUM_PATTERN.sub('<NUM>', msg)

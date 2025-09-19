@@ -10,9 +10,7 @@ from .normalize import cluster_logs
 from .summarize import summarize_clusters
 from .report import make_markdown, write_report
 
-
 app = typer.Typer(add_completion=False, help="EDA log analysis pipeline: parse → cluster → summarize → report")
-
 
 def _read_lines_if_exists(path_str: Optional[str], tool: str) -> list[str]:
   if not path_str:
@@ -37,7 +35,6 @@ def run(
   """Run the full pipeline on the provided logs and generate a report."""
   load_dotenv()
 
-  # Parse logs into items
   items = []
 
   iv_lines = _read_lines_if_exists(iverilog_log, "iverilog")
@@ -48,17 +45,13 @@ def run(
   if ys_lines:
     items += parse_lines("yosys", ys_lines)
 
-  # Cluster
   clusters = cluster_logs(items)
 
-  # Summarize (uses AI if available/API key present)
   summaries = summarize_clusters(clusters)
 
-  # Ensure output directories exist
   Path(out_json).parent.mkdir(parents=True, exist_ok=True)
   Path(out_md).parent.mkdir(parents=True, exist_ok=True)
 
-  # Write JSON (clusters as list, summaries as dict keyed by cluster id)
   Path(out_json).write_text(
     json.dumps(
       {
@@ -70,7 +63,6 @@ def run(
     encoding="utf-8",
   )
 
-  # Write Markdown report
   md = make_markdown(clusters, summaries, feedback_url)
   write_report(md, Path(out_md))
 
