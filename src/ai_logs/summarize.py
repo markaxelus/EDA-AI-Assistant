@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Dict
 from .schema import Cluster, Summary
 from .gemini_ai import generate_summary_with_gemini, create_fallback_summary
 
@@ -21,15 +21,15 @@ def has_no_key_heuristic(cluster: Cluster) -> bool:
   
   return has_error_or_warnings and (has_placeholders or is_recurring)
 
-def summarize_clusters(clusters: List[Cluster]) -> List[Summary]:
-  summaries = []
+def summarize_clusters(clusters: List[Cluster]) -> Dict[str, Summary]:
+  summaries = {}
 
   for cluster in clusters:
     if has_no_key_heuristic(cluster):
       print(f"Generating summary for cluster {cluster.id}...")
       summary = generate_summary_with_gemini(cluster)
       if summary:
-        summaries.append(summary)
+        summaries[cluster.id] = summary
       else:
         print(f"Failed to generate summary for cluster {cluster.id}")
 
