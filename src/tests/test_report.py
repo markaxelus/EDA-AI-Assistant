@@ -67,3 +67,12 @@ def test_write_report_md_only(tmp_path: Path, capsys: pytest.CaptureFixture[str]
 
 
 
+
+def test_preview_markdown_stdout():
+  """python -m pytest src/tests/test_report.py::test_preview_markdown_stdout -s -q"""
+  cluster, summaries = _sample_cluster_and_summaries()
+  md = make_markdown([cluster], summaries, "https://feedback.example")
+  print("\n===== GENERATED MARKDOWN PREVIEW =====\n")
+  print(md)
+  print("\n===== END MARKDOWN PREVIEW =====\n")
+  assert "# Engineering Log Analysis Report" in md
