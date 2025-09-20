@@ -36,8 +36,8 @@ python -m src.ai_logs.main --iverilog-log data/verilog_small.log --yosys-log dat
 python -m src.ai_logs.main --iverilog-log data/verilog_large.log --yosys-log data/yosys_large.log
 ```
 
-**Sample Output[MD]:** [View Generated Report](src/data/reports/report.md) - See the AI-generated analysis of EDA tool logs with intelligent explanations and suggested fixes.  
-**Sample Output[JSON]:** [View Generated Report](src/data/processed/results.json)   
+**Sample Output[MD]:** [View Generated Report](data/reports/report.md) - See the AI-generated analysis of EDA tool logs with intelligent explanations and suggested fixes.  
+**Sample Output[JSON]:** [View Generated Report](data/processed/results.json)   
 
 > Note that some clusters with `warning` and `info` labels will not have a summary or suggested_fixes unless they are recurring, which is intended by design.
 
