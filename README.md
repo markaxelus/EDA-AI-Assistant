@@ -13,21 +13,31 @@ This project directly addresses the critical need for AI-driven automation in se
 ## How to run
 
 ```bash
-# Install dependencies
-pip install -r requirements.txt
+# 1) (Recommended) Create and activate a virtual environment
 
-# Set up environment (add your Gemini API key)
+# Windows (PowerShell)
+python -m venv .venv  
+.\.venv\Scripts\Activate.ps1  
+
+# macOS/Linux (bash/zsh)
+python3 -m venv .venv   
+source .venv/bin/activate   
+
+# 2) Install dependencies inside the venv
+pip install -r requirements.txt   
+
+# 3) Set up environment (add your Gemini API key)
 echo "GEMINI_API_KEY=your_key_here" > .env
 
-# Run the analysis pipeline with small sample data
-python -m src.ai_logs.main --iverilog-log ../data/verilog_small.log --yosys-log ../data/yosys_small.log
+# 4) Run the analysis pipeline with small sample data
+python -m src.ai_logs.main --iverilog-log data/verilog_small.log --yosys-log data/yosys_small.log
 
 # With large sample data
-python -m src.ai_logs.main --iverilog-log ../data/verilog_large.log --yosys-log ../data/yosys_large.log
+python -m src.ai_logs.main --iverilog-log data/verilog_large.log --yosys-log data/yosys_large.log
 ```
 
 **Sample Output[MD]:** [View Generated Report](src/data/reports/report.md) - See the AI-generated analysis of EDA tool logs with intelligent explanations and suggested fixes.  
-**Sample Output[JSON]:** [View Generated Report](src/data/processed/results.json) - See the AI-generated analysis of EDA tool logs with intelligent explanations and suggested fixes.
+**Sample Output[JSON]:** [View Generated Report](src/data/processed/results.json)   
 
 > Note that some clusters with `warning` and `info` labels will not have a summary or suggested_fixes unless they are recurring, which is intended by design.
 
