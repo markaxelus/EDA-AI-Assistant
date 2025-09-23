@@ -10,7 +10,7 @@ env:
   IMAGE_NAME: ${{ github.repository }}
 
 jobs:
-  test:
+  tests:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
@@ -20,7 +20,7 @@ jobs:
     - run: | 
         pip install --upgrade pip
         pip install -r requirements.txt
-        python -m pytest src/tests/ -V
+        python -m pytest src/tests/ -v
 
   build-push:
     needs: tests
@@ -30,8 +30,8 @@ jobs:
       packages: write
     steps:
     - uses: actions/checkout@v4
-    - uses: docker/setup-buildx-actions@v3
-    - uses: docker/login-action@v2
+    - uses: docker/setup-buildx-action@v3
+    - uses: docker/login-action@v3
       with:
         registry: ${{ env.REGISTRY }}
         username: ${{ github.actor }}
@@ -55,4 +55,4 @@ jobs:
         tags: ${{ steps.meta.outputs.tags }}
         labels: ${{ steps.meta.outputs.labels }}
         cache-from: type=gha
-        cache-to: type=gha, mode=max
+        cache-to: type=gha,mode=max
