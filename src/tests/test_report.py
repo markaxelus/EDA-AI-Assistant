@@ -40,7 +40,9 @@ def test_make_markdown_basic_contents():
   assert "Feedback:" in md
 
   assert "Cluster cluster_0" in md
-  assert cluster.key in md
+  # Check for escaped version of cluster key (with backticks around placeholders)
+  escaped_key = cluster.key.replace('<', '`<').replace('>', '>`')
+  assert escaped_key in md
   assert "Count: **2**" in md
   assert "Tool: `iverilog`" in md
 
