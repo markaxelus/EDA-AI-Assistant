@@ -10,7 +10,7 @@ env:
   IMAGE_NAME: ${{ github.repository }}
 
 jobs:
-  tests:
+  test:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
@@ -20,10 +20,11 @@ jobs:
     - run: | 
         pip install --upgrade pip
         pip install -r requirements.txt
+        pip install pytest
         python -m pytest src/tests/ -v
 
   build-push:
-    needs: tests
+    needs: test
     runs-on: ubuntu-latest
     permissions:
       contents: read
