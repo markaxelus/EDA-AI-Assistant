@@ -70,7 +70,7 @@ safety-report.json
 .pre-commit-cache/
 
 # Docker
-.dockerignore
+# .dockerignore - commented out so we can track it
 
 # Build artifacts
 *.tar.gz
