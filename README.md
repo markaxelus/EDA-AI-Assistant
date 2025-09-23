@@ -46,9 +46,9 @@ python -m src.ai_logs.main --iverilog-log data/verilog_large.log --yosys-log dat
 > - In real production logs, most errors and warnings from tools like Icarus Verilog or Yosys include `file:line` references (e.g., `alu.v:105`).    
 > - When present, these locations can be easily parsed and included in the cluster summaries, making the report seem less trivial and more actionable.  
 
-## Feedback loop
+## Feedback loop [Proof of Concept]
 
-Continuous improvement is built into the system through an integrated feedback mechanism. Users can provide feedback on AI-generated explanations and suggested fixes via the embedded feedback form in each generated report. This iterative feedback loop drives model refinement and ensures the tool evolves with real-world engineering challenges. The system is designed for extensibility, future versions will support additional EDA tools (Synopsys, Cadence), enhanced clustering algorithms, and integration with a more robust CI/CD pipelines for automated design validation.
+Continuous improvement can be built into the system through an integrated feedback mechanism. Users can provide feedback on AI-generated explanations and suggested fixes via the embedded feedback form in each generated report. This iterative feedback loop drives model refinement and ensures the tool evolves with real-world engineering challenges. The system is designed for extensibility, future versions will support additional EDA tools (Synopsys, Cadence), enhanced clustering algorithms, and integration with a more robust CI/CD pipelines for automated design validation.
 
 ## Tech
 
@@ -88,5 +88,6 @@ The test suite covers all core functionality including log parsing, clustering a
 - Support for Verilog/SystemVerilog design flows
 - Automated error pattern recognition and classification
 - Engineering-friendly report formatting for design review processes
+
 
 
