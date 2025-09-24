@@ -12,28 +12,26 @@ This project directly addresses the critical need for AI-driven automation in se
 
 ## How to run
 
+### Docker (Recommended)
 ```bash
-# 1) (Recommended) Create and activate a virtual environment
+# Setup environment
+cp .env.example .env
+# Edit .env and add your GEMINI_API_KEY
 
-# Windows (PowerShell)
-python -m venv .venv  
-.\.venv\Scripts\Activate.ps1  
+# Run analysis
+docker-compose --profile production up
+```
 
-# macOS/Linux (bash/zsh)
-python3 -m venv .venv   
-source .venv/bin/activate   
+### Local Python
+```bash
+# Create virtual environment
+python -m venv .venv && source .venv/bin/activate  # Linux/Mac
+python -m venv .venv && .\.venv\Scripts\Activate.ps1  # Windows
 
-# 2) Install dependencies inside the venv
-pip install -r requirements.txt   
-
-# 3) Set up environment (add your Gemini API key)
+# Install and run
+pip install -r requirements.txt
 echo "GEMINI_API_KEY=your_key_here" > .env
-
-# 4) Run the analysis pipeline with small sample data
 python -m src.ai_logs.main --iverilog-log data/verilog_small.log --yosys-log data/yosys_small.log
-
-# With large sample data
-python -m src.ai_logs.main --iverilog-log data/verilog_large.log --yosys-log data/yosys_large.log
 ```
 
 **Sample Output[MD]:** [View Generated Report](data/reports/report.md) - See the AI-generated analysis of EDA tool logs with intelligent explanations and suggested fixes.  
