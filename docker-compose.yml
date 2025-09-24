@@ -1,0 +1,61 @@
+services:
+  # Prod
+  eda-ai-assistant:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: runtime
+    image: eda-ai-assistant:runtime            
+    container_name: eda-ai-assistant
+    env_file:
+      - .env                                   
+    environment:
+      PYTHONUNBUFFERED: "1"
+    volumes:
+      - ./data:/app/data:ro                    
+      - ./output:/app/output                  
+    # Default command: SMALL dataset (override for large)
+    command: >
+      --iverilog-log /app/data/verilog_small.log
+      --yosys-log   /app/data/yosys_small.log
+      --out-json    /app/output/results.json
+      --out-md      /app/output/report.md
+    profiles: [production]
+
+  # Dev
+  eda-ai-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: devdeps
+    image: eda-ai-assistant:dev
+    container_name: eda-ai-dev
+    env_file:
+      - .env
+    environment:
+      PYTHONUNBUFFERED: "1"
+    volumes:
+      - ./src:/app/src                          
+      - ./data:/app/data:ro
+      - ./output:/app/output
+    working_dir: /app
+    command: /bin/bash
+    stdin_open: true
+    tty: true
+    profiles: [development]
+
+  # Test
+  eda-ai-test:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: test
+    image: eda-ai-assistant:test
+    container_name: eda-ai-test
+    environment:
+      PYTHONUNBUFFERED: "1"
+    volumes:
+      - ./src:/app/src
+      - ./data:/app/data:ro
+    command: pytest -v src/tests/
+    profiles: [test]
